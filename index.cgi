@@ -43,7 +43,6 @@ CREATE TABLE IF NOT EXISTS status (
 ''')
 
 def __checkurl(url):
-    print url
     try:
         response = urllib2.urlopen(url)
     except:
@@ -67,17 +66,19 @@ def get(cur):
         statuses.append({'url': row[0]})
 
     for status in statuses:
-        status['code'] = cur.execute('''
-SELECT code from status
-WHERE url = "%s"
-ORDER BY datetime DESC
+        cur.execute('''
+SELECT `code` from `status`
+WHERE `url` = "%s"
+ORDER BY `datetime` DESC
 LIMIT 1
-''')
+''' % status['url'])
+        status['code'] = cur.fetchall()[0][0]
     print json.dumps(statuses)
 
 def post(cur):
     __schema(cur)
     for url in URLS:
+        print url
         data = __checkurl(url)
         cur.execute('''
 INSERT INTO status (url, datetime, code)
@@ -93,10 +94,12 @@ db = MySQLdb.connect(
 )
 cur = db.cursor() 
 
-print 'Content-type: text/plain'
-print ''
 if os.environ.get('REQUEST_METHOD', None) == 'GET':
+    print 'Content-type: application/json'
+    print ''
     get(cur)
 else:
+    print 'Content-type: text/plain'
+    print ''
     post(cur)
     db.commit()
