@@ -43,12 +43,13 @@ CREATE TABLE IF NOT EXISTS status (
 ''')
 
 def __checkurl(url):
+    print url
     try:
-        response = requests.get(url)
+        response = urllib2.urlopen(url)
     except:
         code = 0
     else:
-        code = response.status_code
+        code = response.code
 
     return {
         'url': url,
@@ -82,7 +83,6 @@ def post(cur):
 INSERT INTO status (url, datetime, code)
 VALUES ("%(url)s", "%(datetime)s", "%(code)d")
 ''' % data)
-    cur.commit()
 
 # Connect
 db = MySQLdb.connect(
@@ -95,7 +95,8 @@ cur = db.cursor()
 
 print 'Content-type: text/plain'
 print ''
-if os.environ['REQUEST_METHOD'] == 'GET':
+if os.environ.get('REQUEST_METHOD', None) == 'GET':
     get(cur)
-elif os.environ['REQUEST_METHOD'] == 'POST':
+else:
     post(cur)
+    db.commit()
