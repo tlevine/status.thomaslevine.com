@@ -1,7 +1,7 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 import os
 import MySQLdb
-import requests
+import urllib2
 import datetime
 import json
 
