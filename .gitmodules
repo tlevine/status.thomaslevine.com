@@ -1,0 +1,3 @@
+[submodule "settings"]
+	path = settings
+	url = git.thomaslevine.com:status.thomaslevine.com-settings.git
