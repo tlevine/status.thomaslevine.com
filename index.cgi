@@ -5,8 +5,12 @@ import requests
 import datetime
 import json
 
+# =========================================================
+# Settings
+# =========================================================
+
 USERNAME = 'status'
-PASSWORD = ''
+PASSWORD = '' 
 HOST = 'thomaslevine.db'
 DATABASE = 'status'
 
@@ -26,6 +30,8 @@ URLS = [
     'http://deadpeoplebornonmybirthday.com',
     'http://www.deadpeoplebornonmybirthday.com',
 ]
+
+# =========================================================
 
 def __schema(cur):
   cur.execute('''
