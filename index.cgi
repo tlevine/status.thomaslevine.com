@@ -1,6 +1,8 @@
 #!/usr/bin/env python2
+import os
 import MySQLdb
-from settings import USERNAME, PASSWORD, HOST, DATABASE
+from lib import get, post
+from settings import USERNAME, PASSWORD, HOST, DATABASE, URLS
 
 # Connect
 db = MySQLdb.connect(
@@ -11,3 +13,7 @@ db = MySQLdb.connect(
 )
 cur = db.cursor() 
 
+if os.environ['REQUEST_METHOD'] == 'GET':
+    get(cur)
+elif os.environ['REQUEST_METHOD'] == 'POST':
+    post(cur)
