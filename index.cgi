@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+# -*- encoding: utf-8 -*-
+# Relevant characters: ⚠⚛☭⚙
 import os
 import MySQLdb
 import urllib2
@@ -29,18 +31,22 @@ URLS = [
     'http://www.dumptruck.io',
     'http://deadpeoplebornonmybirthday.com',
     'http://www.deadpeoplebornonmybirthday.com',
+    'http://status.thomaslevine.com',
 ]
 
 # =========================================================
 
-def __schema(cur):
+def put(cur):
   cur.execute('''
-CREATE TABLE IF NOT EXISTS status (
+CREATE TABLE status (
   url VARCHAR(2000) NOT NULL,
   datetime DATETIME NOT NULL,
   code SMALLINT NOT NULL
 );
 ''')
+  cur.execute('CREATE INDEX IF NOT EXISTS status_url ON `status` (url)')
+  cur.execute('CREATE INDEX IF NOT EXISTS status_datetime ON `status` (datetime)')
+  cur.execute('CREATE INDEX IF NOT EXISTS status_code ON `status` (code)')
 
 def __checkurl(url):
     try:
@@ -57,8 +63,6 @@ def __checkurl(url):
     }
 
 def get(cur):
-    __schema(cur)
-
     # Get the data
     statuses = []
     cur.execute("SELECT distinct url from status")
@@ -76,7 +80,6 @@ LIMIT 1
     print json.dumps(statuses)
 
 def post(cur):
-    __schema(cur)
     for url in URLS:
         print url
         data = __checkurl(url)
@@ -98,6 +101,8 @@ if os.environ.get('REQUEST_METHOD', None) == 'GET':
     print 'Content-type: application/json'
     print ''
     get(cur)
+elif os.environ.get('REQUEST_METHOD', None) == 'PUT':
+    put(cur)
 else:
     print 'Content-type: text/plain'
     print ''
